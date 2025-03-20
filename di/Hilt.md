@@ -155,3 +155,4 @@ object RepositoryModule {
 ## 7. 관련 자료
 - [Hilt를 사용한 Android DI 블로그](https://hyperconnect.github.io/2020/07/28/android-dagger-hilt.html)
 - [Hilt와 Dagger-Android 비교](https://proandroiddev.com/exploring-dagger-hilt-and-what-s-main-differences-from-dagger-android-84a46e775b1a)
+
