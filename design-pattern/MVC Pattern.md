@@ -6,9 +6,9 @@
 > 코드가 커지고 기능이 많아질수록 Controller가 비대해져 유지보수가 어려워집니다.  
 > 그래서 안드로이드에서는 MVC 대신 MVP와 MVVM, 최근에는 MVI를 더 많이 사용합니다.
 
-안드로이드 개발을 하다보면 Activity/Fragment에 모든 코드가 작성되어 있는 경우가 있습니다..
-이 경우 본인도 자신의 코드를 알아보지 못하는데요.
-이 과정에서 디자인 패턴의 중요성과 MVC 패턴의 단점을 느끼게 됩니다.
+안드로이드 개발을 하다보면 Activity/Fragment에 모든 코드가 작성되어 있는 경우가 있습니다..  
+이 경우 본인도 자신의 코드를 알아보지 못하는데요.  
+이 과정에서 디자인 패턴의 중요성과 MVC 패턴의 단점을 느끼게 됩니다.  
 
 이 문서에서는 **왜 안드로이드에서는 사용하지 않는지**, **어떤 구조와 역할을 가지는지**, **그리고 MVC의 장단점은 무엇인지** 에 대해 설명합니다.  
 또, 왜 안드로이드 개발에서는 MVC가 아닌 다른 패턴을 활용하는지 설명합니다.
@@ -40,6 +40,21 @@ Model과 View 사이의 흐름을 중재하며, 어플리케이션 로직을 관
 - **역할이 분리되어 가독성과 유지보수성이 좋음**
 - **Model은 독립적이기 때문에 테스트가 쉬움**
 - **동일한 Model을 다른 View에서 재사용 가능**
+
+---
+
+## MVC의 장단점
+
+| 항목 | 설명 | 구분 |
+|------|------|------|
+| 역할 분리 | 각각의 책임이 명확 | 장점 |
+| Model 독립성 | 안드로이드에 종속되지 않아 단위 테스트 용이 | 장점 |
+| 구현 간단 | 작은 프로젝트에서 빠르게 적용 가능 | 장점 |
+| 재사용성 | 같은 Model을 여러 View에서 사용할 수 있음 | 장점 |
+| View와 Controller 간 강한 결합 | View의 상태 변경, 이벤트 핸들링을 모두 Controller가 처리 | 단점 |
+| Controller의 비대화 | 코드가 점점 몰리면서 유지보수가 어려워짐 | 단점 |
+| 안드로이드 종속성 | Controller(Activity)는 Android 클래스라 테스트하기 어려움 | 단점 |
+| UI 로직 분리 어려움 | View가 Model을 직접 참조해 의존성 생김 | 단점 |
 
 ---
 
@@ -150,22 +165,7 @@ binding.button.setOnClickListener {
 
 ---
 
-## MVC의 장단점
-
-| 항목 | 설명 | 구분 |
-|------|------|------|
-| 역할 분리 | 각각의 책임이 명확 | 장점 |
-| Model 독립성 | 안드로이드에 종속되지 않아 단위 테스트 용이 | 장점 |
-| 구현 간단 | 작은 프로젝트에서 빠르게 적용 가능 | 장점 |
-| 재사용성 | 같은 Model을 여러 View에서 사용할 수 있음 | 장점 |
-| View와 Controller 간 강한 결합 | View의 상태 변경, 이벤트 핸들링을 모두 Controller가 처리 | 단점 |
-| Controller의 비대화 | 코드가 점점 몰리면서 유지보수가 어려워짐 | 단점 |
-| 안드로이드 종속성 | Controller(Activity)는 Android 클래스라 테스트하기 어려움 | 단점 |
-| UI 로직 분리 어려움 | View가 Model을 직접 참조해 의존성 생김 | 단점 |
-
----
-
 ## 참고 자료
-[안드로이드에는 MVC 아키텍처 패턴이 없다](https://brunch.co.kr/@mystoryg/211)
-[안드로이드 MVC](https://brunch.co.kr/@mystoryg/170)
-[안드로이드 Architecture 패턴 Part 1: 모델 뷰 컨트롤러 (Model-View-Controller)](http://medium.com/nspoons/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-architecture-%ED%8C%A8%ED%84%B4-part-1-%EB%AA%A8%EB%8D%B8-%EB%B7%B0-%EC%BB%A8%ED%8A%B8%EB%A1%A4%EB%9F%AC-model-view-controller-881c6fda24d9)
+[안드로이드에는 MVC 아키텍처 패턴이 없다](https://brunch.co.kr/@mystoryg/211)  
+[안드로이드 MVC](https://brunch.co.kr/@mystoryg/170)  
+[안드로이드 Architecture 패턴 Part 1: 모델 뷰 컨트롤러 (Model-View-Controller)](http://medium.com/nspoons/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-architecture-%ED%8C%A8%ED%84%B4-part-1-%EB%AA%A8%EB%8D%B8-%EB%B7%B0-%EC%BB%A8%ED%8A%B8%EB%A1%A4%EB%9F%AC-model-view-controller-881c6fda24d9)  
