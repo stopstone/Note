@@ -123,35 +123,35 @@ class MainActivity : AppCompatActivity() {
 ### 4.1 MutableLiveData vs LiveData
 - `MutableLiveData`는 값의 읽기/수정 모두 가능.
 - `LiveData`는 읽기 전용 (ViewModel 외부에 수정 불가).
-- **단방향 데이터 흐름(Unidirectional Data Flow)** 구현을 돕는다.
+- **단방향 데이터 흐름(Unidirectional Data Flow)** 구현을 돕습니다.
 
 ### 4.2 setValue vs postValue
 - `setValue()`: MainThread에서 즉시 값 업데이트.
 - `postValue()`: 다른 스레드에서 값을 업데이트 요청하고 MainThread에서 반영.
-- `postValue()`는 호출이 빠르게 이어질 경우 최신 값만 반영될 수 있다.
+- `postValue()`는 호출이 빠르게 이어질 경우 최신 값만 반영될 수 있습니니다.
 
 ### 4.3 항상 최신 데이터만 유지
 - LiveData는 마지막으로 설정된 데이터 하나만 보존.
 - 연속된 여러 이벤트를 처리해야 할 경우 별도 설계 필요.
 
 ### 4.4 LiveData는 UI 업데이트용
-- LiveData는 내부적으로 항상 MainThread에서 값 변경 및 전달을 처리한다.
-- Repository, UseCase, DataSource 등 백엔드나 IO 처리 레이어에서는 LiveData를 사용하는 것은 권장되지 않는다.
-- 이러한 경우에는 Coroutine Flow, RxJava 등 다른 비동기 스트림 라이브러리를 사용하는 것이 적절하다.
+- LiveData는 내부적으로 항상 MainThread에서 값 변경 및 전달을 처리합니다.
+- Repository, UseCase, DataSource 등 백엔드나 IO 처리 레이어에서는 LiveData를 사용하는 것은 권장되지 않습니다.
+- 이러한 경우에는 Coroutine Flow 등 다른 비동기 스트림 라이브러리를 사용하는 것이 적절합니다.
 
 ### 4.5 LiveData는 단일 값 보존
-- LiveData는 이벤트 스트림을 관리하거나 연속된 데이터 처리를 지원하지 않는다.
-- 연속된 값 변화를 다루려면 별도의 큐, Channel, StateFlow 등을 사용해야 한다.
+- LiveData는 이벤트 스트림을 관리하거나 연속된 데이터 처리를 지원하지 않습니다.
+- 연속된 값 변화를 다루려면 별도의 큐, Channel, StateFlow 등을 사용해야 합니다.
 
 ### 4.6 LiveData 내부 구조
 - `_data`: 현재 값.
 - `_pendingData`: postValue 호출 시 임시 저장하는 값.
-- `postValue()`는 비동기 처리 후 `setValue()` 호출 구조를 가진다.
+- `postValue()`는 비동기 처리 후 `setValue()` 호출 구조를 가집니다.
 
 ### 4.7 Lifecycle 연결 구조
 - `LifecycleBoundObserver` 클래스를 통해 LifecycleOwner의 상태를 감시.
 - STARTED 또는 RESUMED 상태일 때만 옵저버에게 데이터 알림.
-- LifecycleOwner가 DESTROYED 상태가 되면 옵저버가 자동으로 제거되어 추가적인 리소스 정리가 필요 없다.
+- LifecycleOwner가 DESTROYED 상태가 되면 옵저버가 자동으로 제거되어 추가적인 리소스 정리가 필요 없습니니다.
 
 ### 4.8 LiveData의 한계 및 보완 방법
 - 이벤트 스트림을 지원하지 않는다.
