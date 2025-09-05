@@ -159,8 +159,179 @@ JSON은 키-값 쌍으로 이루어진 간결한 데이터 표현 방식으로, 
 > 
 > 역직렬화(Deserialization): JSON 데이터를 다시 객체 형태로 변환하여 앱 내에서 사용하는 과정입니다.
 
+## 9. REST하지 않는 API는 무엇일까요?
 
-## 9. 서버 인증(Authentication)과 인가(Authorization)
+REST API를 이해하기 위해 반대 개념인 "REST하지 않는 API"에 대해 알아보겠습니다.  
+REST의 6가지 제약 조건을 위반하는 API들을 살펴보면 REST API와의 차이점을 더 명확히 이해할 수 있습니다.
+
+### 9.1 상태를 저장하는 API (Stateless 위반)
+
+**REST하지 않은 예시:**
+```kotlin
+// 서버가 세션을 유지하는 방식
+POST /login
+{
+  "username": "user123",
+  "password": "password123"
+}
+// 서버가 세션 ID를 저장하고 클라이언트에게 반환
+
+GET /profile
+// 클라이언트가 세션 ID를 쿠키로 전송해야 함
+```
+
+**RESTful한 방식:**
+```kotlin
+// JWT 토큰을 사용한 무상태 방식
+POST /auth/login
+{
+  "username": "user123", 
+  "password": "password123"
+}
+// 서버가 JWT 토큰을 반환 (서버에 상태 저장하지 않음)
+
+GET /profile
+Authorization: Bearer <JWT_TOKEN>
+// 모든 요청에 토큰을 포함하여 인증 정보 전달
+```
+
+### 9.2 일관성 없는 인터페이스 (Uniform Interface 위반)
+
+**REST하지 않은 예시:**
+```kotlin
+// 일관성 없는 URL 패턴
+GET /getUserInfo?id=123
+POST /createNewUser
+PUT /updateUserData
+DELETE /removeUser?id=123
+
+// 동사가 포함된 URL (리소스 중심이 아님)
+GET /getAllUsers
+POST /createUser
+PUT /updateUser
+DELETE /deleteUser
+```
+
+**RESTful한 방식:**
+```kotlin
+// 일관된 URL 패턴 (명사 중심)
+GET /users/123
+POST /users
+PUT /users/123
+DELETE /users/123
+
+// HTTP 메서드로 동작을 표현
+GET /users          // 모든 사용자 조회
+POST /users         // 새 사용자 생성
+PUT /users/123      // 사용자 정보 수정
+DELETE /users/123   // 사용자 삭제
+```
+
+### 9.3 캐시 불가능한 응답 (Cacheable 위반)
+
+**REST하지 않은 예시:**
+```kotlin
+// 항상 동적 데이터를 반환하는 API
+GET /currentTime
+// 매번 다른 시간을 반환하므로 캐시할 수 없음
+
+GET /randomNumber
+// 매번 다른 랜덤 숫자를 반환
+```
+
+**RESTful한 방식:**
+```kotlin
+// 적절한 캐시 헤더를 포함한 응답
+GET /users/123
+Response Headers:
+  Cache-Control: max-age=3600  // 1시간 캐시 가능
+  ETag: "abc123"              // 버전 정보 제공
+```
+
+### 9.4 계층화되지 않은 시스템 (Layered System 위반)
+
+**REST하지 않은 예시:**
+```kotlin
+// 클라이언트가 서버의 내부 구조를 알아야 하는 API
+GET /database/users/123
+GET /cache/users/123
+GET /backup/users/123
+```
+
+**RESTful한 방식:**
+```kotlin
+// 클라이언트는 단일 엔드포인트만 알면 됨
+GET /users/123
+// 서버 내부에서 적절한 계층(캐시, 데이터베이스 등)을 통해 처리
+```
+
+### 9.5 클라이언트-서버 분리 위반
+
+**REST하지 않은 예시:**
+```kotlin
+// 서버가 클라이언트의 UI 로직을 포함하는 경우
+GET /users/123?format=html&theme=dark&layout=mobile
+// 서버가 HTML, CSS, JavaScript를 직접 반환
+```
+
+**RESTful한 방식:**
+```kotlin
+// 서버는 데이터만 반환하고, 클라이언트가 UI 처리
+GET /users/123
+Response: {
+  "id": 123,
+  "name": "홍길동",
+  "email": "hong@example.com"
+}
+// 클라이언트(안드로이드 앱)가 데이터를 받아 UI 구성
+```
+
+### 9.6 실제 안드로이드 개발에서 마주치는 REST하지 않은 API들
+
+**1. GraphQL (REST의 대안)**
+```kotlin
+// GraphQL은 REST의 제약 조건을 일부 완화
+POST /graphql
+{
+  "query": "query { user(id: 123) { name, email, posts { title } } }"
+}
+// 하나의 엔드포인트로 여러 리소스를 조회
+```
+
+**2. RPC 스타일 API**
+```kotlin
+// 원격 프로시저 호출 방식
+POST /api/getUserProfile
+POST /api/createUserAccount
+POST /api/updateUserSettings
+// 모든 요청이 POST로, 동사가 URL에 포함됨
+```
+
+**3. SOAP API**
+```kotlin
+// XML 기반의 복잡한 프로토콜
+POST /soap/UserService
+Content-Type: text/xml
+
+<soap:Envelope>
+  <soap:Body>
+    <getUserProfile>
+      <userId>123</userId>
+    </getUserProfile>
+  </soap:Body>
+</soap:Envelope>
+```
+
+### 9.7 REST하지 않은 API의 문제점
+
+1. **유지보수 어려움**: 일관성 없는 인터페이스로 인해 개발자가 API 사용법을 외우기 어려움
+2. **확장성 제한**: 상태를 저장하는 서버는 확장이 어려움
+3. **캐시 효율성 저하**: 캐시할 수 없는 응답으로 인한 성능 저하
+4. **클라이언트 의존성**: 서버와 클라이언트가 강하게 결합되어 독립적 개발 어려움
+
+> **핵심 포인트**: REST API는 웹의 특성을 최대한 활용하여 **간단하고, 확장 가능하며, 유지보수가 쉬운** API를 만들기 위한 설계 원칙입니다. REST하지 않은 API는 이러한 장점들을 포기하게 됩니다.
+
+## 10. 서버 인증(Authentication)과 인가(Authorization)
 
 - **Authentication(인증)**: 사용자가 누구인지 확인하는 과정입니다. (예: 로그인)
 - **Authorization(인가)**: 인증된 사용자가 특정 리소스에 접근할 수 있는 권한이 있는지를 판단하는 과정입니다. (예: 관리자 계정만 특정 페이지 접근 허용)
